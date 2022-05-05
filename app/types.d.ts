@@ -9,7 +9,7 @@ declare global {
   type BreadcrumbFunction = (match: RouteMatch) => React.ReactNode
 
   type RouteHandle = {
-    [key: string]: any
+    [key: string]: unknown
     breadcrumb?: BreadcrumbFunction
   }
 }

@@ -32,7 +32,7 @@ module.exports = {
     'test',
     'mocks',
     'prisma',
-    'app/database/generated',
+    'app/db/edgeql',
     'app/styles/tailwind.css',
   ],
   // we're using vitest which has a very similar API to jest
