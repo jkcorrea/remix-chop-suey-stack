@@ -15,7 +15,7 @@
     "mocks:build": "tsc mocks/*.ts --outDir build/mocks",
     "generate:css": "tailwindcss -i ./app/styles/main.css -o ./app/styles/tailwind.css",
     "start": "remix-serve build",
-    "start-with-mocks": "node -r ./build/mocks ./node_modules/.bin/remix-serve build",
+    "start-with-mocks": "node -r dotenv/config -r ./build/mocks ./node_modules/.bin/remix-serve build",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "test": "vitest --passWithNoTests",
