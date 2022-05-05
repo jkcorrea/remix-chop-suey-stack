@@ -71,7 +71,7 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: ⚡ Run vitest
-        run: yarn test --coverage
+        run: "yarn test:cov"
 
   cypress:
     name: ⚫️ Cypress
@@ -115,7 +115,7 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: ⚙️ Build
-        run: yarn build
+        run: "yarn build && yarn mocks:build"
 
       - name: 🌳 Cypress run
         uses: cypress-io/github-action@v3

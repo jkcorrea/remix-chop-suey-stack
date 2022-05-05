@@ -15,7 +15,6 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@edgeql": ["./dbschema/edgeql-js"],
       "~/*": ["./app/*"]
     },
     "skipLibCheck": true,

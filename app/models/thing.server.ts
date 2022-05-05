@@ -1,7 +1,6 @@
-import type { Thing } from '@edgeql'
-import e from '@edgeql'
-
-import { db } from '~/services/db.server'
+import { db } from '~/db'
+import type { Thing } from '~/db/edgeql'
+import e from '~/db/edgeql'
 
 export type ThingBase = Pick<Thing, 'id' | 'name' | 'description'>
 export type CreateThing = Pick<Thing, 'name' | 'description'>

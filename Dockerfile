@@ -49,22 +49,24 @@ RUN yarn install --immutable
 FROM base as build
 WORKDIR /app
 
-COPY --from=deps /app/node_modules /app/node_modules
-COPY --from=edgedb /build/generated /app/dbschema/edgeql-js
-
 ADD . .
+
+COPY --from=deps /app/node_modules /app/node_modules
+COPY --from=edgedb /build/generated /app/app/db/edgeql
+
 RUN yarn build
 
 # --- PROD IMAGE ---
 FROM base
 WORKDIR /app
 
+ADD . .
+
 COPY --from=deps /app/node_modules /app/node_modules
-COPY --from=edgedb /build/generated /app/dbschema/edgeql-js
+COPY --from=edgedb /build/generated /app/app/db/edgeql
 COPY --from=edgedb /usr/bin/edgedb /usr/bin/edgedb
 
 COPY --from=build /app/build /app/build
 COPY --from=build /app/public /app/public
-ADD . .
 
 CMD ["yarn", "start"]
