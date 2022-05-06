@@ -83,7 +83,7 @@ const OnboardingPage = () => {
           <input
             {...inputProps('alias')}
             ref={aliasRef}
-            placeholder="McUser69"
+            placeholder="jdolmayan36"
             name="alias"
             className={classNames(
               'input input-bordered',
