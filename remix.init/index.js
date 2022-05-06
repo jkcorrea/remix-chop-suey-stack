@@ -49,7 +49,7 @@ async function main({ rootDirectory }) {
       2
     ) + '\n'
 
-  fs.copyFileSync(
+  fs.copyFile(
     path.join(rootDirectory, '.env.example'),
     path.join(rootDirectory, '.env')
   )
