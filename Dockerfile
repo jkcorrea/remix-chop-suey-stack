@@ -32,13 +32,14 @@ RUN edgedb-server \
     --tls-security insecure \
     --output-dir generated
 
-# --- INSTALL DEPS ---
+# --- INSTALL ALL DEPENDENCIES ---
 FROM base as deps
 WORKDIR /app
 
-# Install just the package.json deps
 COPY package.json yarn.lock ./
-RUN yarn install --immutable
+# Set env to dev so we can build the client app
+RUN NODE_ENV=development yarn install --frozen-lockfile
+
 
 # --- BUILD APP ---
 FROM base as build
@@ -49,7 +50,10 @@ ADD . .
 COPY --from=deps /app/node_modules /app/node_modules
 COPY --from=edgedb /build/generated /app/app/db/edgeql
 
-RUN yarn build
+# Prune out dev dependencies after building
+# https://github.com/yarnpkg/yarn/issues/696#issuecomment-258418656
+RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
+
 
 # --- PROD IMAGE ---
 FROM base
@@ -57,7 +61,7 @@ WORKDIR /app
 
 ADD . .
 
-COPY --from=deps /app/node_modules /app/node_modules
+COPY --from=build /app/node_modules /app/node_modules
 COPY --from=edgedb /build/generated /app/app/db/edgeql
 COPY --from=edgedb /usr/bin/edgedb /usr/bin/edgedb
 
