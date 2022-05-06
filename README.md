@@ -23,6 +23,8 @@ My thought is that EdgeDB will take care of the shaky migration + SQL management
 It ended up being a lot of exploratory work to get all these technologies working together since they're all fairly new, so I figured I should package it up as a template while I'm at it 🤠
 
 
+> PRO TIP: For extra productivity, the author recommends listening to the [SOAD discography](https://open.spotify.com/playlist/4pfHVoX09Ej6rzFjsBnXfg?si=7cea59c42d234ade) while developing on this stack.
+
 ## So what's in it?
 
 The hits:
@@ -54,9 +56,10 @@ Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --
 
 ## TODO
 
-a.k.a. the wishlist
+a.k.a. things that will never get done
 
 - [ ] Deploy to Fly w/ EdgeDB (& document)
+- [ ] Run [EdgeQL generation in GitHub actions](https://github.com/edgedb/setup-edgedb) as well, so we don't need to track it in git
 - [ ] Database dev/test seeds
 - [ ] Setup some actual unit tests
 - [ ] Mock auth (so we don't have to create/delete users on the real Clerk api)
@@ -84,11 +87,24 @@ This starts your app in development mode, rebuilding assets on file changes.
 yarn dev
 ```
 
+### Migrations
+
+When [adding migrations](https://www.edgedb.com/docs/guides/migrations/index), you'll want to re-generate your EdgeDB query builder with a `yarn edgedb-js --output-file ./app/db/edgeql --force-overwrite`. Or, simply apply your migrations via:
+
+```sh
+yarn db:migrate # will apply migration AND regenerate the query builder
+```
+
 ### Relevant Files
 
 This is a pretty simple CRUD app, but it's a good example of how you can build a full stack app with Prisma, Supabase and Remix. The main functionality is creating users, logging in and out (handling access and refresh tokens + refresh on expire), and creating and deleting notes.
 
-- auth [./app/services/auth.server.ts](./app/services/auth.server.ts)
+- DB
+  - `app/db/db.server.ts` - initializes the EdgeDB client
+  - `app/db/edgeql/` - contains the [generated EdgeQL](https://www.edgedb.com/docs/clients/01_js/generation) query builder.
+  - `dbschema/` - contains your EdgeQL schema & migrations
+- Auth
+  -
 - user sessions, and verifying them [./app/services/session.server.ts](./app/services/session.server.ts)
 - creating, and deleting notes [./app/models/note.server.ts](./app/models/note.server.ts)
 
@@ -96,7 +112,7 @@ This is a pretty simple CRUD app, but it's a good example of how you can build a
 
 > Do what you know if you are a Fly.io expert.
 
-This Remix Stack comes with GitHub Actions that handle automatically testing (unit & integration) and deploying your app to production and staging environments on Fly.io.
+This Remix Stack comes with GitHub Actions that automatically deploy your app to production and staging environments on Fly.
 
 Prior to your first deployment, you'll need to do a few things:
 

@@ -7,7 +7,7 @@ ENV NODE_ENV production
 FROM base as edgedb-deps
 WORKDIR /build
 COPY package.json .
-RUN echo '{"dependencies": {' $(grep -E -o '"edgedb":\s"(.*)"' package.json) '}}' > package.json && yarn
+RUN echo '{"dependencies": {' $(grep -E -o '"edgedb":\s"(.*)"' package.json) '}}' > package.json && yarn install
 
 # --- GENERATE EDGEDB QUERY BUILDER ---
 FROM edgedb/edgedb:1 AS edgedb
@@ -17,6 +17,7 @@ USER edgedb
 WORKDIR /build
 COPY --from=edgedb-deps /build .
 COPY dbschema dbschema
+# The generated edgeql-js client will be at /build/generated!
 RUN edgedb-server \
     -D /build/data \
     --security insecure_dev_mode \
@@ -30,19 +31,13 @@ RUN edgedb-server \
     --target cjs \
     --tls-security insecure \
     --output-dir generated
-# The generated edgeql-js client is now at /build/generated!
 
-# --- SETUP APP BUILDER ---
+# --- INSTALL DEPS ---
 FROM base as deps
 WORKDIR /app
 
-# Copy in the package file as well as other yarn
-# dependencies in the local directory, assuming the
-# yarn berry release module is inside .yarn/releases
-# already
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
-
+# Install just the package.json deps
+COPY package.json yarn.lock ./
 RUN yarn install --immutable
 
 # --- BUILD APP ---

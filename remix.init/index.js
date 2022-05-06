@@ -5,6 +5,7 @@ const inquirer = require('inquirer')
 
 const toml = require('@iarna/toml')
 const sort = require('sort-package-json')
+const { execSync, spawnSync } = require('child_process')
 
 function escapeRegExp(string) {
   // $& means the whole matched string
@@ -59,37 +60,35 @@ async function main({ rootDirectory }) {
     fs.writeFile(PACKAGE_JSON_PATH, newPackageJson),
   ])
 
-  await askSetupQuestions({ rootDirectory }).catch((error) => {
-    if (error.isTtyError) {
-      // Prompt couldn't be rendered in the current environment
-    } else {
-      throw error
+  const [didSetupDb] = await askSetupQuestions({ rootDirectory }).catch(
+    (error) => {
+      if (error.isTtyError) {
+        // Prompt couldn't be rendered in the current environment
+      } else {
+        throw error
+      }
     }
-  })
-
-  console.log(
-    `
-Setup is almost complete. Follow these steps to finish initialization:
-
-- Start the database:
-  npm run docker
-
-- Run setup (this updates the database):
-  npm run setup
-
-- Run the first build (this generates the server you will run):
-  npm run build
-
-- You're now ready to rock and roll 🤘
-  npm run dev
-    `.trim()
   )
+
+  if (didSetupDb) {
+    console.log(`✅  Project is ready! Start development with "yarn dev"`)
+  } else {
+    console.log(
+      `
+Setup is almost complete. You'll next need to install the EdgeDB CLI:
+
+https://www.edgedb.com/install
+
+Then run "edgedb project init" to initialize the db.
+    `.trim()
+    )
+  }
 }
 
 async function askSetupQuestions({ rootDirectory }) {
   const answers = await inquirer.prompt([
     {
-      name: 'validate',
+      name: 'db',
       type: 'confirm',
       default: false,
       message:
@@ -97,17 +96,28 @@ async function askSetupQuestions({ rootDirectory }) {
     },
   ])
 
-  if (answers.validate) {
-    console.log(
-      `Running the validate script to make sure everything was set up properly`
-    )
-    spawnSync('edgedb', ['project', 'init', '--non-interactive'], {
-      stdio: 'inherit',
-      cwd: rootDirectory,
-    })
+  let didSetupDb = false
+
+  if (answers.db) {
+    console.log('Checking to ensure EdgeDB CLI is installed...')
+    let isEdgeDbInstalled = false
+    try {
+      execSync('type -p edgedb')
+      isEdgeDbInstalled = true
+    } catch (error) {
+      console.warning(`Could not initialize db: EdgeDB CLI not found!`)
+    }
+
+    if (isEdgeDbInstalled) {
+      spawnSync('edgedb', ['project', 'init', '--non-interactive'], {
+        stdio: 'inherit',
+        cwd: rootDirectory,
+      })
+      didSetupDb = true
+    }
   }
 
-  console.log(`✅  Project is ready! Start development with "npm run dev"`)
+  return [didSetupDb]
 }
 
 module.exports = main

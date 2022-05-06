@@ -209,7 +209,7 @@ export namespace cfg {
 }
 export interface Profile extends std.$Object {
   "alias": string;
-  "userId"?: string | null;
+  "userId": string;
 }
 export interface Thing extends std.$Object {
   "owner": Profile;
