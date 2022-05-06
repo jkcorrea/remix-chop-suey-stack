@@ -23,7 +23,7 @@ My thought is that EdgeDB will take care of the shaky migration + SQL management
 It ended up being a lot of exploratory work to get all these technologies working together since they're all fairly new, so I figured I should package it up as a template while I'm at it 🤠
 
 
-> PRO TIP: For extra productivity, the author recommends listening to the [SOAD discography](https://open.spotify.com/playlist/4pfHVoX09Ej6rzFjsBnXfg?si=7cea59c42d234ade) while developing on this stack.
+> PRO TIP: For extra productivity, the author recommends listening to [System of a Down](https://open.spotify.com/playlist/4pfHVoX09Ej6rzFjsBnXfg?si=7cea59c42d234ade) while developing on this stack 🤘
 
 ## So what's in it?
 

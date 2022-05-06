@@ -7,8 +7,35 @@ on:
   pull_request: {}
 
 jobs:
+  detect-changes:
+    name: 📒 Only doc changes?
+    runs-on: ubuntu-latest
+    outputs:
+      only-doc-changes: ${{ steps.only-doc-changes.outputs.only_modified }}
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2 # Fetch the preceding commit as well, to detect changes
+
+      - name: 🕵️‍♀️ Detect if doc-only changes
+        id: only-doc-changes
+        uses: tj-actions/changed-files@v19
+        with:
+          files: |
+            README.md
+            LICENSE.md
+            .vscode/
+            docs/
+            .env.example
+
   ci:
     name: 🫠 Build, lint, test
+    needs: only-doc-changes
+    if: needs.only-doc-changes.outputs.only-doc-changes == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     services:
@@ -19,9 +46,6 @@ jobs:
         ports:
           - 5656:5656
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
@@ -37,31 +61,13 @@ jobs:
       - name: 🔬 Lint
         run: yarn lint
 
-      # The EdgeQL js client requires the generated code to match the installed version
-      # So, if we want to use a cahced client, we must be using a matching version
-      - name: 🔢 Get edgedb-js version
-        id: edgedb-js-version
-        shell: bash
-        run: |
-          echo "::set-output name=version::$(yarn list --depth=0 --pattern edgedb --json --non-interactive --no-progress | jq -r '.data.trees[].name')"
-
-      # If nothing's changed in the schema we should be good to use a cached client
-      - name: 💾 Cache EdgeQL client
-        id: cache-edgeql
-        uses: actions/cache@v3
-        with:
-          path: app/db/edgeql
-          key: edgeql-${{ steps.edgedb-js-version.outputs.version }}-${{ hashFiles('dbschema/*.esdl', 'dbschema/migrations/*.edgeql') }}
-
       - name: 💿 Install EdgeDB
-        if: steps.cache-edgeql.outputs.cache-hit != 'true'
         uses: edgedb/setup-edgedb@v1
         with:
           server-dsn: edgedb://localhost:5656
           instance-name: ci_edgedb_instance
 
       - name: 👾 Generate EdgeQL client
-        if: steps.cache-edgeql.outputs.cache-hit != 'true'
         run: yarn generate:edgeql
 
       - name: 🔎 Type check
@@ -92,16 +98,15 @@ jobs:
 
   build:
     name: 🐳 Build Docker image
+    needs: only-doc-changes
     # only build/deploy main branch on pushes. also dont deploy the template repo.
     if: |
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+      needs.only-doc-changes.outputs.only-doc-changes == 'false'
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
       && github.event_name == 'push'
       && github.repository != 'jkcorrea/remix-chop-suey-stack'
     runs-on: ubuntu-latest
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
@@ -144,9 +149,6 @@ jobs:
       && github.repository != 'jkcorrea/remix-chop-suey-stack'
 
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
