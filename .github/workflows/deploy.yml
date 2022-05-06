@@ -92,8 +92,11 @@ jobs:
 
   build:
     name: 🐳 Build Docker image
-    # only build/deploy main branch on pushes
-    if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && github.event_name == 'push' }}
+    # only build/deploy main branch on pushes. also dont deploy the template repo.
+    if: |
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+      && github.event_name == 'push'
+      && github.repository != 'jkcorrea/remix-chop-suey-stack'
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -134,8 +137,11 @@ jobs:
     name: 🚀 Deploy
     runs-on: ubuntu-latest
     needs: [ci, build]
-    # only build/deploy main branch on pushes
-    if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && github.event_name == 'push' }}
+    # only build/deploy main branch on pushes. also dont deploy the template repo.
+    if: |
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+      && github.event_name == 'push'
+      && github.repository != 'jkcorrea/remix-chop-suey-stack'
 
     steps:
       - name: 🛑 Cancel Previous Runs
