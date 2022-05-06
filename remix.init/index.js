@@ -113,6 +113,10 @@ async function askSetupQuestions({ rootDirectory }) {
         stdio: 'inherit',
         cwd: rootDirectory,
       })
+      spawnSync('yarn', ['genereate:edgeql'], {
+        stdio: 'inherit',
+        cwd: rootDirectory,
+      })
       didSetupDb = true
     }
   }

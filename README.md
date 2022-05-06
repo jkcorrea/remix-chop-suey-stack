@@ -78,7 +78,8 @@ a.k.a. things that will never get done
 First install the cli via the [EdgeDB installation guide](https://www.edgedb.com/docs/guides/quickstart), then in this project directory run (the initializer prompts to do this for you):
 
   ```sh
-  edgedb project init
+  edgedb project init # Initialize a local db instance
+  yarn generate:edgeql # Generate the query builder
   ```
 
 ### Clerk Auth
