@@ -31,6 +31,7 @@ jobs:
             .vscode/
             docs/
             .env.example
+            remix.init
 
   ci:
     name: 🫠 Build, lint, test
