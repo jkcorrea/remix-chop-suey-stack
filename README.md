@@ -1,31 +1,19 @@
-<p style="text-align:center;">
+<p align="center">
   <img src="./public/assets/soad.webp" width="100%" />
-  <h1 style="text-align:center;">Remix Chop Suey Stack</h1>
+  <h1 align="center">Remix Chop Suey Stack</h1>
 </p>
 
-Forked from [Supa Fly Stack](https://github.com/rphlmr/supa-fly-stack).
+<p align="center">
+Forked from <a href="https://github.com/rphlmr/supa-fly-stack">Supa Fly Stack</a>.
+<br />Learn more about <a href="https://remix.run/stacks">Remix Stacks</a>.
+</p>
 
-Learn more about [Remix Stacks](https://remix.run/stacks).
-
+## Quickstart
 ```
 npx create-remix --template jkcorrea/remix-chop-suey-stack
 ```
 
-## Why this stack?
-
-I run my startup on [Redwood](https://redwoodjs.com/) + [Supabase](https://supabase.com/) + [Prisma](https://www.prisma.io/). All great projects that I still recommend, but a few things have been paining me:
-- Prisma can feel janky. Migrations occasionally get out of sync, rollbacks are a mess, schemas aside from `public` aren't supported in migrations, generated queries can start to suck for complex logic.
-- Supabase, as of today, requires a minor in SQL to get shit done (though, [I do agree](https://twitter.com/jkcorrea_/status/1507155640635981844?s=20&t=c1JQQpk2_ZtnIB3-2xHRiA) it is the right approach, I just don't have time to think about DB management right now)
-- My Redwood codebase got a bit bloated. There's more "state" in the system than I'd like, making it difficult to add new code without breaking old code. I didn't make use of many of the niceties of Redwood (Cells, Storybook, tests, etc), and so have a lot of bloat for no reason in the project now.
-
-My thought is that EdgeDB will take care of the shaky migration + SQL management problems, while Remix may help me reduce the state & logic to reason about between the front & back ends.
-
-It ended up being a lot of exploratory work to get all these technologies working together since they're all fairly new, so I figured I should package it up as a template while I'm at it 🤠
-
-
-> PRO TIP: For extra productivity, the author recommends listening to [System of a Down](https://open.spotify.com/playlist/4pfHVoX09Ej6rzFjsBnXfg?si=7cea59c42d234ade) while developing on this stack 🤘
-
-## So what's in it?
+## What's in it?
 
 The hits:
 - [EdgeDB](https://www.edgedb.com/) newfangled graph-relational database
@@ -53,6 +41,20 @@ Bonus tracks:
 - Healthcheck endpoint for [Fly backups region fallbacks](https://fly.io/docs/reference/configuration/#services-http_checks)
 
 Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --template your/repo`! Make it your own.
+
+## Why?
+
+I run my startup on [Redwood](https://redwoodjs.com/) + [Supabase](https://supabase.com/) + [Prisma](https://www.prisma.io/). All great projects that I still recommend, but a few things have been paining me:
+- Prisma can feel janky. Migrations occasionally get out of sync, rollbacks are a mess, schemas aside from `public` aren't supported in migrations, generated queries can start to suck for complex logic.
+- Supabase, as of today, requires a minor in SQL to get shit done (though, [I do agree](https://twitter.com/jkcorrea_/status/1507155640635981844?s=20&t=c1JQQpk2_ZtnIB3-2xHRiA) it is the right approach, I just don't have time to think about DB management right now)
+- My Redwood codebase got a bit bloated. There's more "state" in the system than I'd like, making it difficult to add new code without breaking old code. I didn't make use of many of the niceties of Redwood (Cells, Storybook, tests, etc), and so have a lot of bloat for no reason in the project now.
+
+My thought is that EdgeDB will take care of the shaky migration + SQL management problems, while Remix may help me reduce the state & logic to reason about between the front & back ends.
+
+It ended up being a lot of exploratory work to get all these technologies working together since they're all fairly new, so I figured I should package it up as a template while I'm at it 🤠
+
+
+> PRO TIP: For extra productivity, the author recommends listening to [System of a Down](https://open.spotify.com/playlist/4pfHVoX09Ej6rzFjsBnXfg?si=7cea59c42d234ade) while developing on this stack 🤘
 
 ## TODO
 
