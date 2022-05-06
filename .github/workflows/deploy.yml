@@ -7,7 +7,7 @@ on:
   pull_request: {}
 
 jobs:
-  detect-changes:
+  only-doc-changes:
     name: 📒 Only doc changes?
     runs-on: ubuntu-latest
     outputs:
