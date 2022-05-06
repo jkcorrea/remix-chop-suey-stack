@@ -103,11 +103,17 @@ This is a pretty simple CRUD app, but it's a good example of how you can build a
 - DB
   - `app/db/db.server.ts` - initializes the EdgeDB client
   - `app/db/edgeql/` - contains the [generated EdgeQL](https://www.edgedb.com/docs/clients/01_js/generation) query builder.
+  - `app/models/` - abstracts away EdgeQL queries to keep loaders/actions simple
   - `dbschema/` - contains your EdgeQL schema & migrations
 - Auth
-  -
-- user sessions, and verifying them [./app/services/session.server.ts](./app/services/session.server.ts)
-- creating, and deleting notes [./app/models/note.server.ts](./app/models/note.server.ts)
+  - `app/routes/__auth` - login & signup pages, wrapped by a Remix layout route. Clerk makes auth really simple.
+  - `app/settings` - I wanted users to have a unified settings page for everything account + non-account related, so this shows how to do that with Clerk components
+- App
+  - `app/__app` - Realizing this is a poor naming choice now. Basically just wanted to demo some simple CRUD with toasts & loading state transitions.
+- Test
+  - `cypress/` - e2e tests live here
+  - `mocks/` - not yet implemented, but could use this to mock out db/3rd-party requests (e.g. mocking auth without connecting to Clerk)
+  - TODO: implement some unit tests to demo vitest.
 
 ## Deployment
 
