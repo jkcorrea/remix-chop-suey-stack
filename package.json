@@ -23,7 +23,6 @@
     "test": "vitest --passWithNoTests",
     "test:cov": "vitest --coverage --passWithNoTests",
     "test:e2e:dev": "start-server-and-test 'yarn dev-with-mocks' http://localhost:3000 'yarn cypress open'",
-    "pretest:e2e:run": "run-p build mocks:build",
     "test:e2e:run": "PORT=8811 start-server-and-test 'yarn start-with-mocks' http://localhost:8811 'yarn cypress run'",
     "typecheck": "tsc -b && tsc -b cypress",
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run"

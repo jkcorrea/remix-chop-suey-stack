@@ -15,6 +15,7 @@ node_modules
 
 # Generated
 /app/styles/tailwind.css
+/app/db/edgeql
 
 # Yarn 3 (non-PnP)
 .pnp.*

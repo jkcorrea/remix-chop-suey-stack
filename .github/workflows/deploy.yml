@@ -25,13 +25,22 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
-      - name: ⎔ Setup node
+      - name: ⬡ Setup node
         uses: actions/setup-node@v3
         with:
           node-version: 17
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
+
+      - name: 💿 Install EdgeDB
+        uses: edgedb/setup-edgedb@v1
+        with:
+          server-dsn: edgedb://localhost:5656
+          instance-name: ci_edgedb_instance
+
+      - name: 👾 Generate EdgeQL client
+        run: yarn generate:edgeql
 
       - name: 🔬 Lint
         run: yarn lint
@@ -40,13 +49,7 @@ jobs:
         run: yarn typecheck
 
       - name: ⚡ Run vitest
-        run: "yarn test:cov"
-
-      - name: 💿 Install EdgeDB
-        uses: edgedb/setup-edgedb@v1
-        with:
-          server-dsn: edgedb://localhost:5656
-          instance-name: ci_edgedb_instance
+        run: yarn test:cov
 
       - name: 🔑 Make envfile
         uses: SpicyPizza/create-envfile@v1.3
@@ -58,7 +61,7 @@ jobs:
           file_name: .env
 
       - name: ⚙️ Build app with mocks
-        run: "yarn build && yarn mocks:build"
+        run: yarn build && yarn mocks:build
 
       - name: 🌳 Cypress run
         uses: cypress-io/github-action@v3

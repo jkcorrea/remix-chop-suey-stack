@@ -59,7 +59,6 @@ Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --
 a.k.a. things that will never get done
 
 - [ ] Deploy to Fly w/ EdgeDB (& document)
-- [ ] Run [EdgeQL generation in GitHub actions](https://github.com/edgedb/setup-edgedb) as well, so we don't need to track it in git
 - [ ] Database dev/test seeds
 - [ ] Setup some actual unit tests
 - [ ] Mock auth (so we don't have to create/delete users on the real Clerk api)
