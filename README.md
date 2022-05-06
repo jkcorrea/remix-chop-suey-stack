@@ -42,6 +42,11 @@ Bonus tracks:
 
 Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --template your/repo`! Make it your own.
 
+### Alternatives from the community
+If you want to try out EdgeDB and Remix but don't like this particular stack, check out these amazing starters:
+- [edgedb/remix](https://github.com/edgedb/remix)
+- [jacob-ebey/remix-edgedb](https://github.com/jacob-ebey/remix-edgedb)
+
 ## Why?
 
 I run my startup on [Redwood](https://redwoodjs.com/) + [Supabase](https://supabase.com/) + [Prisma](https://www.prisma.io/). All great projects that I still recommend, but a few things have been paining me:
@@ -119,6 +124,8 @@ This is a pretty simple CRUD app, but it's a good example of how you can build a
 
 > Do what you know if you are a Fly.io expert.
 
+> NOTE: Deploying EdgeDB is left as [an exercise to the reader](https://www.edgedb.com/docs/guides/deployment/index). I have not flushed out the best way to deploy it yet and it seems the EdgeDB maintainers have plans for a cloud-hosted version of it coming soon, so I'm waiting for that. In the meantime, you'll have to host your own and supply the `EDGEDB_DSN` to your Fly app.
+
 This Remix Stack comes with GitHub Actions that automatically deploy your app to production and staging environments on Fly.
 
 Prior to your first deployment, you'll need to do a few things:
@@ -161,11 +168,13 @@ Prior to your first deployment, you'll need to do a few things:
   fly secrets set CLERK_FRONTEND_API="CLERK_FRONTEND_API" --app remix-chop-suey-stack-staging
   fly secrets set CLERK_API_KEY="CLERK_API_KEY" --app remix-chop-suey-stack-staging
   fly secrets set CLERK_JWT_KEY="CLERK_JWT_KEY" --app remix-chop-suey-stack-staging
+  fly secrets set EDGEDB_DSN="EDGEDB_DSN" --app remix-chop-suey-staging-stack # See above note about deploying EdgeDB
 
   # production
   fly secrets set CLERK_FRONTEND_API="CLERK_FRONTEND_API" --app remix-chop-suey-stack
   fly secrets set CLERK_API_KEY="CLERK_API_KEY" --app remix-chop-suey-stack
   fly secrets set CLERK_JWT_KEY="CLERK_JWT_KEY" --app remix-chop-suey-stack
+  fly secrets set EDGEDB_DSN="EDGEDB_DSN" --app remix-chop-suey-stack # See above note about deploying EdgeDB
   ```
 
 
