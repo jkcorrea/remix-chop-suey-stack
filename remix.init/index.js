@@ -20,6 +20,7 @@ async function main({ rootDirectory }) {
   const README_PATH = path.join(rootDirectory, 'README.md')
   const FLY_TOML_PATH = path.join(rootDirectory, 'fly.toml')
   const PACKAGE_JSON_PATH = path.join(rootDirectory, 'package.json')
+  const GITIGNORE_PATH = path.join(rootDirectory, '.gitignore')
 
   const REPLACER = 'remix-chop-suey-stack'
   const REPLACER_REGEXP = new RegExp(escapeRegExp(REPLACER), 'g')
@@ -31,10 +32,11 @@ async function main({ rootDirectory }) {
     // get rid of anything that's not allowed in an app name
     .replace(/[^a-zA-Z0-9-_]/g, '-')
 
-  const [readme, flyToml, packageJson] = await Promise.all([
+  const [readme, flyToml, packageJson, gitignore] = await Promise.all([
     fs.readFile(README_PATH, 'utf-8'),
     fs.readFile(FLY_TOML_PATH, 'utf-8'),
     fs.readFile(PACKAGE_JSON_PATH, 'utf-8'),
+    fs.readFile(GITIGNORE_PATH, 'utf-8'),
   ])
 
   const prodToml = toml.parse(flyToml)
@@ -49,6 +51,11 @@ async function main({ rootDirectory }) {
       2
     ) + '\n'
 
+  const newGitignore = gitignore.replace(
+    /### REMOVE ###.*### REMOVE ###\n*/gs,
+    ''
+  )
+
   fs.copyFile(
     path.join(rootDirectory, '.env.example'),
     path.join(rootDirectory, '.env')
@@ -58,6 +65,7 @@ async function main({ rootDirectory }) {
     fs.writeFile(FLY_TOML_PATH, toml.stringify(prodToml)),
     fs.writeFile(README_PATH, newReadme),
     fs.writeFile(PACKAGE_JSON_PATH, newPackageJson),
+    fs.writeFile(GITIGNORE_PATH, newGitignore),
   ])
 
   const [didSetupDb] = await askSetupQuestions({ rootDirectory }).catch(
