@@ -1,6 +1,6 @@
 import { db } from '~/db'
-import type { Thing } from '~/db/edgeql'
 import e from '~/db/edgeql'
+import type { Thing } from '~/db/types'
 
 export type ThingBase = Pick<Thing, 'id' | 'name' | 'description'>
 export type CreateThing = Pick<Thing, 'name' | 'description'>
@@ -43,7 +43,7 @@ export const createThing = async (th: CreateThing, userId: string) =>
     .insert(e.Thing, {
       ...th,
       owner: e.select(e.Profile, (p) => ({
-        filter: e.op(p.userId, '=', userId),
+        filter_single: e.op(p.userId, '=', userId),
       })),
     })
     .run(db)

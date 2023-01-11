@@ -16,6 +16,7 @@ import {
   useCatch,
   useLoaderData,
 } from '@remix-run/react'
+import type { ReactNode } from 'react'
 import { Toaster } from 'react-hot-toast'
 
 import { APP_THEME, DEFAULT_META } from '~/lib/constants'
@@ -89,7 +90,9 @@ const Document = ({
   )
 }
 
-const Layout: React.FC = ({ children }) => <div id="remix-root">{children}</div>
+const Layout = ({ children }: { children: ReactNode }) => (
+  <div id="remix-root">{children}</div>
+)
 
 export const CatchBoundary = ClerkCatchBoundary(() => {
   const caught = useCatch()

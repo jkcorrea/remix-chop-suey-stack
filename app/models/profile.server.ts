@@ -1,6 +1,6 @@
 import { db } from '~/db'
-import type { Profile } from '~/db/edgeql'
 import e from '~/db/edgeql'
+import type { Profile } from '~/db/types'
 
 export type UserProfile = Pick<Profile, 'id' | 'alias' | 'userId'>
 export type CreateProfile = Pick<Profile, 'alias' | 'userId'>

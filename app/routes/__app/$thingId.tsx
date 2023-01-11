@@ -1,5 +1,7 @@
 import type { LoaderFunction } from '@remix-run/node'
-import { json, notFound, useLoaderData } from 'remix-utils'
+import { json } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import { notFound } from 'remix-utils'
 import invariant from 'tiny-invariant'
 
 import { requireAuth } from '~/lib/utils.server'
@@ -22,7 +24,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 }
 
 const ThingShow = () => {
-  const { thing } = useLoaderData({}) as LoaderData
+  const { thing } = useLoaderData() as LoaderData
 
   return (
     <div className="prose mx-auto">
