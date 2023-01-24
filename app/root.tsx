@@ -1,20 +1,15 @@
 import React from 'react'
-import { ClerkApp, ClerkCatchBoundary } from '@clerk/remix'
-import { rootAuthLoader } from '@clerk/remix/ssr.server'
-import type {
-  LinksFunction,
-  LoaderFunction,
-  MetaFunction,
-} from '@remix-run/node'
+import type { LinksFunction, MetaFunction } from '@remix-run/node'
 import {
+  isRouteErrorResponse,
   Links,
   LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  useCatch,
   useLoaderData,
+  useRouteError,
 } from '@remix-run/react'
 import type { ReactNode } from 'react'
 import { Toaster } from 'react-hot-toast'
@@ -31,23 +26,13 @@ export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: tailwindStylesheetUrl },
 ]
 
-export const loader: LoaderFunction = async (args) =>
-  rootAuthLoader(args, ({ request }) => ({ ENV: {} }))
-
-/**
- * The root module's default export is a component that renders the current
- * route via the `<Outlet />` component. Think of this as the global layout
- * component for your app.
- */
 const App = () => (
   <Document>
-    <Layout>
-      <Outlet />
-    </Layout>
+    <Outlet />
   </Document>
 )
 
-export default ClerkApp(App)
+export default App
 
 const Document = ({
   children,
@@ -61,8 +46,9 @@ const Document = ({
   // const useWhenSomethingIsTrue = matches.some(match => match.handle && match.handle?.something)
 
   return (
-    <html lang="en" data-theme={APP_THEME}>
+    <html lang="en" data-theme={APP_THEME} className="bg-base-100">
       <head>
+        <title>{title || 'Remix Chop Suey Stack'}</title>
         <Meta />
         <Links />
       </head>
@@ -90,56 +76,34 @@ const Document = ({
   )
 }
 
-const Layout = ({ children }: { children: ReactNode }) => (
-  <div id="remix-root">{children}</div>
-)
+export const ErrorBoundary = () => {
+  const error = useRouteError()
+  let title = 'Error!'
+  let errorMessage: ReactNode = error instanceof Error ? error.message : null
 
-export const CatchBoundary = ClerkCatchBoundary(() => {
-  const caught = useCatch()
-
-  let message
-  switch (caught.status) {
-    case 401:
-      message = (
-        <p>
-          Oops! Looks like you tried to visit a page that you do not have access
-          to.
-        </p>
-      )
-      break
-    case 404:
-      message = (
-        <p>Oops! Looks like you tried to visit a page that does not exist.</p>
-      )
-      break
-    default:
-      throw new Error(caught.data || caught.statusText)
+  if (isRouteErrorResponse(error)) {
+    title = `${error.status}: ${error.statusText}`
+    switch (error.status) {
+      case 401:
+        errorMessage =
+          'Oops! Looks like you tried to visit a page that you do not have access to.'
+        break
+      case 404:
+        errorMessage =
+          'Oops! Looks like you tried to visit a page that does not exist.'
+        break
+    }
   }
 
   return (
-    <Document title={`${caught.status} ${caught.statusText}`}>
-      <Layout>
-        <h1>
-          {caught.status}: {caught.statusText}
-        </h1>
-        {message}
-      </Layout>
-    </Document>
+    <div>
+      <h1>{title}</h1>
+      <p>{errorMessage}</p>
+      <hr />
+      <p>
+        Hey, developer, you should replace this with what you want your users to
+        see.
+      </p>
+    </div>
   )
-})
-
-export const ErrorBoundary = ({ error }: { error: Error }) => (
-  <Document title="Error!">
-    <Layout>
-      <div>
-        <h1>There was an error</h1>
-        <p>{error.message}</p>
-        <hr />
-        <p>
-          Hey, developer, you should replace this with what you want your users
-          to see.
-        </p>
-      </div>
-    </Layout>
-  </Document>
-)
+}

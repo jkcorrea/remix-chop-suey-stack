@@ -1,12 +1,13 @@
 import { Link } from '@remix-run/react'
+import type { SerializeFrom } from '@remix-run/server-runtime'
 import { BsPlusLg, BsTrashFill } from 'react-icons/bs'
 
 import { classNames } from '~/lib/utils'
-import type { ThingBase } from '~/models/thing.server'
+import type { ThingDTO } from '~/resources/thing.server'
 
 type CreateProps = Record<string, never>
 type ThingProps = {
-  thing: ThingBase
+  thing: SerializeFrom<ThingDTO>
   onDelete: () => void
 }
 
@@ -26,7 +27,7 @@ const ThingCard = (props: Props) => {
       )}
     >
       <Link
-        to={`/${thing ? thing.id : 'new'}`}
+        to={`/things/${thing ? thing.id : 'new'}`}
         className="flex h-full w-full items-center"
       >
         <div className="card-body relative items-center justify-center">
@@ -46,7 +47,7 @@ const ThingCard = (props: Props) => {
       {thing && (
         <div className="card-actions absolute top-1 right-1 z-10">
           <button
-            className="btn btn-ghost btn-square btn-sm p-0"
+            className="btn-ghost btn-square btn-sm btn p-0"
             aria-label="delete thing"
             onClick={onDelete}
             data-test="delete-thing"

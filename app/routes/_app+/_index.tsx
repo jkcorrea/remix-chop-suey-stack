@@ -1,42 +1,37 @@
 import { useEffect } from 'react'
-import type { ActionFunction, LoaderFunction } from '@remix-run/node'
+import type { ActionFunction, LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import toast from 'react-hot-toast'
 import { notFound } from 'remix-utils'
 
 import ThingCard from '~/components/ThingCard'
+import { APP_ROUTES } from '~/lib/constants'
 import { requireAuth, requireHttpPost } from '~/lib/utils.server'
-import type { ThingBase } from '~/models/thing.server'
-import { getThings } from '~/models/thing.server'
-import { deleteThing } from '~/models/thing.server'
+import { deleteThing, getThings } from '~/resources/thing.server'
 
 export const action: ActionFunction = async ({ request }) => {
   requireHttpPost(request)
-  const { userId } = await requireAuth(request)
+  const user = await requireAuth(request)
   const thingId = (await request.formData()).get('thingId')
   if (!thingId) throw notFound({ thingId })
 
   try {
-    await deleteThing(thingId.toString(), userId)
+    await deleteThing(thingId.toString(), user.id)
     return json({ ok: true })
   } catch (error) {
     return json({ error: (error as Error).message })
   }
 }
 
-interface LoaderData {
-  things: ThingBase[]
+export const loader = async ({ request }: LoaderArgs) => {
+  const user = await requireAuth(request)
+  const things = await getThings(user.id)
+  return json({ things })
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const { userId } = await requireAuth(request)
-  const things = await getThings(userId)
-  return json<LoaderData>({ things })
-}
-
-const BasesIndex = () => {
-  const { things } = useLoaderData() as LoaderData
+const AppIndex = () => {
+  const { things } = useLoaderData<typeof loader>()
   const fetcher = useFetcher()
 
   useEffect(() => {
@@ -56,7 +51,11 @@ const BasesIndex = () => {
     return (
       <div className="mx-auto flex h-full w-full flex-col items-center justify-center space-y-2">
         <h2>No things yet</h2>
-        <Link id="create-thing" className="btn btn-primary" to="/new">
+        <Link
+          id="create-thing"
+          className="btn-primary btn"
+          to={APP_ROUTES.NEW_THING}
+        >
           Create a thing!
         </Link>
       </div>
@@ -73,4 +72,4 @@ const BasesIndex = () => {
   )
 }
 
-export default BasesIndex
+export default AppIndex
